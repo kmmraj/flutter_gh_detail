@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() => runApp(MyApp());
 
@@ -20,7 +21,21 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   final String title;
 
-  MyHomePage(this.title);
+  static const platform = const MethodChannel(
+      'org.rekotlin.rekotlinrouterexample.basicchannelcommunication');
+
+
+  MyHomePage(this.title){
+    platform.setMethodCallHandler(_handleMethod);
+  }
+
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch(call.method) {
+      case "message":
+        debugPrint('Recieved data is ${call.arguments}');
+        return new Future.value("");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
