@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 void main() => runApp(MyApp());
+
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -13,29 +16,74 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
         accentColor: Colors.amber,
       ),
-      home: MyHomePage('GitHub Repo Detail'),
+      home: RepoDetailPage('GitHub Repo Detail'),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
+
+class RepoDetailPage extends StatefulWidget {
   final String title;
+  RepoDetailPage(this.title);
+  @override
+  _RepoDetailPageState createState() => _RepoDetailPageState(this.title);
+}
 
-  static const platform = const MethodChannel(
-      'org.rekotlin.rekotlinrouterexample.basicchannelcommunication');
+class _RepoDetailPageState extends State<RepoDetailPage> {
+  final String title;
+  int forks;
+  int stargazers;
+  String languages = "";
 
+   Map<String,dynamic> repoDetail;
 
-  MyHomePage(this.title){
+  static const platform = const MethodChannel('repoInfo/details');
+
+  _RepoDetailPageState(this.title) {
     platform.setMethodCallHandler(_handleMethod);
   }
+
+//  @override
+//  void initState() {
+//    platform.setMethodCallHandler(_handleMethod);
+//    super.initState();
+//  }
+
 
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
       case "message":
-        debugPrint('Recieved data is ${call.arguments}');
-        return new Future.value("");
+        {
+          print('Recieved data looks like ${call.arguments}');
+          Map valueMap = jsonDecode(call.arguments);
+          print('Decoded data is $valueMap');
+
+          repoDetail = valueMap['repoDetail'];
+          print('repoDetail data is $repoDetail');
+
+          forks = repoDetail['forks'];
+          stargazers = repoDetail['stargazers'];
+          languages = repoDetail['languages'].toString();
+
+          print('forks ${repoDetail['forks']}');
+          print('stargazers ${repoDetail['stargazers']}');
+          print('languages ${repoDetail['languages']}');
+          forks = repoDetail['forks'];
+          stargazers = repoDetail['stargazers'];
+          languages = repoDetail['languages'].toString();
+
+          setState(() {
+            forks = repoDetail['forks'];
+            stargazers = repoDetail['stargazers'];
+            languages = repoDetail['languages'].toString();
+          });
+
+
+          return new Future.value("");
+        }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,11 +118,11 @@ class MyHomePage extends StatelessWidget {
               padding: const EdgeInsets.only(left: 20.0, right: 20.0),
               child: Row(
                 children: <Widget>[
-                  Text("Staggers"),
+                  Text("Stargazers"),
                   SizedBox(
                     width: 20,
                   ),
-                  Text("2"),
+                  Text(stargazers.toString()),
                 ],
               ),
             ),
@@ -89,7 +137,7 @@ class MyHomePage extends StatelessWidget {
                   SizedBox(
                     width: 20,
                   ),
-                  Text("2"),
+                  Text(forks.toString()),
                 ],
               ),
             ),
@@ -104,7 +152,7 @@ class MyHomePage extends StatelessWidget {
                   SizedBox(
                     width: 20,
                   ),
-                  Text("Kotlin"),
+                  Text(languages),
                 ],
               ),
             ),
@@ -128,14 +176,14 @@ class MyHomePage extends StatelessWidget {
                     child: Text(
                       "Details",
                       style: TextStyle(
-                          //color: Theme.of(context).accentColor
-                          ),
+                        //color: Theme.of(context).accentColor
+                      ),
                     ),
                     onPressed: () {},
                   ),
                   RaisedButton(
                     child: Text("Back"),
-                    onPressed: () {},
+                    onPressed: () => _handleBack(),
                   )
                 ],
               ),
@@ -145,4 +193,35 @@ class MyHomePage extends StatelessWidget {
       ),
     );
   }
+
+
+  _handleBack() {
+    final jsonString = """
+  {
+  "repoDetail": {
+    "stargazers": 6,
+    "forks": 6,
+    "languages": [
+      "kotlin",
+      "java"
+    ]    
+  }
 }
+""";
+
+    Map valueMap = jsonDecode(jsonString);
+    print(valueMap);
+    Map repoDetail = valueMap['repoDetail'];
+    final forks = repoDetail['forks'];
+    final stargazers = repoDetail['stargazers'];
+    final languages = repoDetail['languages'];
+    print(languages);
+    final methodCall = MethodCall("message",jsonString);
+    _handleMethod(methodCall);
+  }
+}
+
+
+
+
+
