@@ -27,6 +27,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
+  provider: ^4.0.2
 
 dev_dependencies:
   flutter_test:
@@ -81,6 +82,6 @@ flutter:
   # They also do not have any bearing on your native host application's
   # identifiers, which may be completely independent or the same as these.
   module:
-    androidX: false
+    androidX: true
     androidPackage: org.rekotlinexample.github.flutter_gh_detail
     iosBundleIdentifier: org.rekotlinexample.github.flutterGhDetail
