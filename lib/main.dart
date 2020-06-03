@@ -73,12 +73,12 @@ class RepoDetailModel extends ChangeNotifier {
           _forks = repoDetail['forks'];
           _stargazers = repoDetail['stargazers'];
           _languages = repoDetail['languages'].toString();
-          notifyListeners();
+          this.notifyListeners();
 
           print('in _handleMethod fork is $forks');
           print('in _handleMethod stargazers is $stargazers');
           print('in _handleMethod languages is $languages');
-          Future.delayed(Duration(milliseconds: 300));
+//          Future.delayed(Duration(milliseconds: 300));
           return true;
         }
     }
@@ -167,119 +167,135 @@ class RepoDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: Card(
-        //color: Colors.grey,
-        child: Column(
-          children: <Widget>[
-            CircleAvatar(
-              radius: 80.0,
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(90.0)),
-                child: Image.network(
-                    'https://avatars2.githubusercontent.com/u/6253321?s=460&v=4'),
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Text("Title",
-                  style: TextStyle(
-                      color: Theme.of(context).accentColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 40)),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Row(
-                children: <Widget>[
-                  Text("Stargazers"),
-                  SizedBox(
-                    width: 20,
+    return Consumer<RepoDetailModel>(
+      builder: (context, model, widget) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(title),
+          ),
+          body: Card(
+            //color: Colors.grey,
+            child: Column(
+              children: <Widget>[
+                CircleAvatar(
+                  radius: 80.0,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(90.0)),
+                    child: Image.network(
+                        'https://avatars2.githubusercontent.com/u/6253321?s=460&v=4'),
                   ),
-                  Consumer<RepoDetailModel>(builder: (context, model, widget) {
-                    print('in widget stargazers is ${model.stargazers}');
-                    return Text('${model.stargazers}');
-                  }),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Consumer<RepoDetailModel>(builder: (context, model, widget) {
-              return Padding(
-                padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                child: Row(
-                  children: <Widget>[
-                    Text("Forks"),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Text(model.forks.toString()),
-                  ],
                 ),
-              );
-            }),
-            SizedBox(
-              height: 10,
-            ),
-            Consumer<RepoDetailModel>(builder: (context, model, widget) {
-              return Padding(
-                padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                child: Row(
-                  children: <Widget>[
-                    Text("Language"),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Text(model.languages),
-                  ],
+                SizedBox(
+                  height: 20,
                 ),
-              );
-            }),
-            SizedBox(
-              height: 30,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Text(
-                "Description.....",
-                style: TextStyle(
-                    color: Theme.of(context).accentColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
-              ),
-            ),
-            ButtonBarTheme(
-              data: ButtonBarThemeData(alignment: MainAxisAlignment.center),
-              child: ButtonBar(
-                children: <Widget>[
-                  RaisedButton(
-                    child: Text(
-                      "Details",
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                  child: Text("Title",
                       style: TextStyle(
-                          //color: Theme.of(context).accentColor
-                          ),
-                    ),
-//                    onPressed: () => _handleBack(),
+                          color: Theme.of(context).accentColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 40)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                  child: Row(
+                    children: <Widget>[
+                      Text("Stargazers"),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Consumer<RepoDetailModel>(
+                          builder: (context, model, widget) {
+                        print('in widget stargazers is ${model.stargazers}');
+                        return Text('${model.stargazers}');
+                      }),
+                    ],
                   ),
-                  RaisedButton(
-                    child: Text("Back"),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Consumer<RepoDetailModel>(builder: (context, model, widget) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                    child: Row(
+                      children: <Widget>[
+                        Text("Forks"),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Text(model.forks.toString()),
+                      ],
+                    ),
+                  );
+                }),
+                SizedBox(
+                  height: 10,
+                ),
+                Consumer<RepoDetailModel>(builder: (context, model, widget) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                    child: Row(
+                      children: <Widget>[
+                        Text("Language"),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Text(model.languages),
+                      ],
+                    ),
+                  );
+                }),
+                SizedBox(
+                  height: 30,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                  child: Text(
+                    "Description.....",
+                    style: TextStyle(
+                        color: Theme.of(context).accentColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                ),
+                ButtonBarTheme(
+                  data: ButtonBarThemeData(alignment: MainAxisAlignment.center),
+                  child: ButtonBar(
+                    children: <Widget>[
+                      RaisedButton(
+                        child: Text(
+                          "Details",
+                          style: TextStyle(
+                              //color: Theme.of(context).accentColor
+                              ),
+                        ),
+                    onPressed: () => _handleDetails(model),
+                      ),
+                      RaisedButton(
+                        child: Text("Back"),
 //                    onPressed: () => _passMessageBack(context),
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
     );
+  }
+
+
+
+  Future<dynamic> _handleDetails(RepoDetailModel model) async {
+    print('In _handleDetails');
+    model._languages ='kotlin,dart';
+    model._stargazers = 6;
+    model._forks = 6;
+    model.notifyListeners();
+    return true;
   }
 
   // TODO: Fix the handleback with another method to invoke a method
