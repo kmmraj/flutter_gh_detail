@@ -55,9 +55,9 @@ class RepoDetailModel extends ChangeNotifier {
   //final _repoListMethodChannel = const MethodChannel('repoInfo/list');
 
 // TODO : Fix the back channel - 1
-  passMessageBack() async {
+  passMessageBack(bool isFavorite) async {
     await _repoDetailMethodChannel.invokeMethod(
-        "handleMessageBack", "Hi from Flutter");
+        "handleMessageBack", isFavorite);
   }
 
   Future<dynamic> _handleMethod(MethodCall call) async {
@@ -200,13 +200,14 @@ class RepoDetailPage extends StatelessWidget {
                     ),
                     IconButton(
                       icon: Icon(
-                        Icons.favorite,
+                        model.favorite ? Icons.star : Icons.star_border,
                         color: model.favorite ? Colors.red : Colors.grey,
                         size: 40,
                       ),
                       onPressed: () {
                         model.favorite = !model.favorite;
                         model.notifyListeners();
+                       // model.passMessageBack(model.favorite);
                       },
                     )
                   ],
@@ -289,7 +290,7 @@ class RepoDetailPage extends StatelessWidget {
                       ),
                       RaisedButton(
                         child: Text("Back"),
-                        onPressed: () => model.passMessageBack(),
+                        onPressed: () =>  model.passMessageBack(model.favorite),
                       )
                     ],
                   ),
