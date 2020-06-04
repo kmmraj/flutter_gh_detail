@@ -40,6 +40,7 @@ class RepoDetailModel extends ChangeNotifier {
   int _forks = 1;
   int _stargazers = 1;
   String _languages = "";
+  bool favorite = false;
 
   int get forks => _forks;
   int get stargazers => _stargazers;
@@ -47,17 +48,16 @@ class RepoDetailModel extends ChangeNotifier {
 
   RepoDetailModel() {
     _repoDetailMethodChannel.setMethodCallHandler(_handleMethod);
-    // TODO : Fix the back channel - 2
-    // _repoDetailMethodChannel.invokeMethod('requestCounter');
   }
 
-  //final _repoDetailMethodChannel = MethodChannel('dev.flutter.example/counter');
   final _repoDetailMethodChannel = const MethodChannel('repoInfo/details');
-  // TODO : Fix the back channel - 1
-  final _repoListMethodChannel = const MethodChannel('repoInfo/list');
 
-  void increment() {
-    _repoDetailMethodChannel.invokeMethod('incrementCounter');
+  //final _repoListMethodChannel = const MethodChannel('repoInfo/list');
+
+// TODO : Fix the back channel - 1
+  passMessageBack() async {
+    await _repoDetailMethodChannel.invokeMethod(
+        "handleMessageBack", "Hi from Flutter");
   }
 
   Future<dynamic> _handleMethod(MethodCall call) async {
@@ -78,7 +78,6 @@ class RepoDetailModel extends ChangeNotifier {
           print('in _handleMethod fork is $forks');
           print('in _handleMethod stargazers is $stargazers');
           print('in _handleMethod languages is $languages');
-//          Future.delayed(Duration(milliseconds: 300));
           return true;
         }
     }
@@ -167,6 +166,7 @@ class RepoDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Remove Consumer at Top of tree
     return Consumer<RepoDetailModel>(
       builder: (context, model, widget) {
         return Scaffold(
@@ -188,13 +188,28 @@ class RepoDetailPage extends StatelessWidget {
                 SizedBox(
                   height: 20,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                  child: Text("Title",
-                      style: TextStyle(
-                          color: Theme.of(context).accentColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 40)),
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                      child: Text("Title",
+                          style: TextStyle(
+                              color: Theme.of(context).accentColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 40)),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.favorite,
+                        color: model.favorite ? Colors.red : Colors.grey,
+                        size: 40,
+                      ),
+                      onPressed: () {
+                        model.favorite = !model.favorite;
+                        model.notifyListeners();
+                      },
+                    )
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0, right: 20.0),
@@ -270,11 +285,11 @@ class RepoDetailPage extends StatelessWidget {
                               //color: Theme.of(context).accentColor
                               ),
                         ),
-                    onPressed: () => _handleDetails(model),
+                        onPressed: () => _handleDetails(model),
                       ),
                       RaisedButton(
                         child: Text("Back"),
-//                    onPressed: () => _passMessageBack(context),
+                        onPressed: () => model.passMessageBack(),
                       )
                     ],
                   ),
@@ -287,15 +302,9 @@ class RepoDetailPage extends StatelessWidget {
     );
   }
 
-
-
-  Future<dynamic> _handleDetails(RepoDetailModel model) async {
+  Future<dynamic> _handleDetails(RepoDetailModel model) {
     print('In _handleDetails');
-    model._languages ='kotlin,dart';
-    model._stargazers = 6;
-    model._forks = 6;
-    model.notifyListeners();
-    return true;
+    // TODO launch a new screen - webview
   }
 
   // TODO: Fix the handleback with another method to invoke a method
@@ -324,8 +333,5 @@ class RepoDetailPage extends StatelessWidget {
 //    _handleMethod(methodCall);
 //  }
 //
-//  _passMessageBack(BuildContext context) async {
-//    await repoListMethodChannel.invokeMethod(
-//        "handleMessageBack", "Hi from Flutter");
-//  }
+
 }
